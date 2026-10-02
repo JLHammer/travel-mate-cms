@@ -1,4 +1,14 @@
 import {defineField, defineType} from 'sanity'
+import {
+  descriptionField,
+  featuredField,
+  imageField,
+  locationField,
+  nameField,
+  slugField,
+  taglineField,
+  websiteField,
+} from './fields'
 
 export const attraction = defineType({
   name: 'attraction',
@@ -6,46 +16,51 @@ export const attraction = defineType({
   type: 'document',
 
   fields: [
-    defineField({
-      name: 'name',
-      type: 'string',
-    }),
-
-    defineField({
-      name: 'slug',
-      type: 'slug',
-    }),
-
-    defineField({
-      name: 'description',
-      type: 'text',
-    }),
-
-    defineField({
-      name: 'image',
-      type: 'image',
-    }),
-
-    defineField({
-      name: 'address',
-      type: 'string',
-    }),
-
-    defineField({
-      name: 'latitude',
-      type: 'number',
-    }),
-
-    defineField({
-      name: 'longitude',
-      type: 'number',
-    }),
+    nameField(),
+    slugField(),
 
     defineField({
       name: 'city',
       title: 'City',
       type: 'reference',
       to: [{type: 'city'}],
+      validation: (rule) => rule.required(),
     }),
+
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Historical', value: 'historical'},
+          {title: 'Museum', value: 'museum'},
+          {title: 'Park', value: 'park'},
+          {title: 'Attraction', value: 'attraction'},
+          {title: 'Landmark', value: 'landmark'},
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+    }),
+
+    taglineField(),
+    descriptionField(),
+    imageField(),
+
+    defineField({
+      name: 'address',
+      title: 'Address',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+
+    locationField(),
+    websiteField(),
+    featuredField(),
   ],
+
+  preview: {
+    select: {title: 'name.da', subtitle: 'city.name.da', media: 'image'},
+  },
 })

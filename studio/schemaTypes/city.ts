@@ -1,4 +1,14 @@
 import {defineField, defineType} from 'sanity'
+import {
+  descriptionField,
+  featuredField,
+  imageField,
+  locationField,
+  nameField,
+  slugField,
+  taglineField,
+  websiteField,
+} from './fields'
 
 export const city = defineType({
   name: 'city',
@@ -6,31 +16,26 @@ export const city = defineType({
   type: 'document',
 
   fields: [
-    defineField({
-      name: 'name',
-      type: 'string',
-    }),
-
-    defineField({
-      name: 'slug',
-      type: 'slug',
-    }),
-
-    defineField({
-      name: 'description',
-      type: 'text',
-    }),
-
-    defineField({
-      name: 'image',
-      type: 'image',
-    }),
+    nameField(),
+    slugField(),
 
     defineField({
       name: 'country',
       title: 'Country',
       type: 'reference',
       to: [{type: 'country'}],
+      validation: (rule) => rule.required(),
     }),
+
+    taglineField(),
+    descriptionField(),
+    imageField(),
+    locationField(),
+    websiteField(),
+    featuredField(),
   ],
+
+  preview: {
+    select: {title: 'name.da', subtitle: 'country.name.da', media: 'image'},
+  },
 })
