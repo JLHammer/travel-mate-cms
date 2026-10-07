@@ -17,3 +17,6 @@
 *.tsbuildinfo
 
 *.local
+
+# Sanity TypeGen schema snapshot (generated)
+/schema.json
