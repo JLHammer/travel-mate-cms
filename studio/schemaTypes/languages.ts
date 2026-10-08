@@ -8,16 +8,12 @@ export const LANGUAGES = [
 
 export type LanguageId = (typeof LANGUAGES)[number]['id']
 
-const REQUIRED_LANGUAGES: LanguageId[] = ['da', 'en']
-
 type LocaleValue = Partial<Record<LanguageId, string>> | undefined
 
-const titleOf = (id: LanguageId) => LANGUAGES.find((lang) => lang.id === id)?.title ?? id
-
 export const requireLanguages: CustomValidator<LocaleValue> = (value) => {
-  const missing = REQUIRED_LANGUAGES.filter((id) => !value?.[id]?.trim())
+  const missing = LANGUAGES.filter(({id}) => !value?.[id]?.trim())
 
-  return missing.length === 0 ? true : `Required in: ${missing.map(titleOf).join(', ')}`
+  return missing.length === 0 ? true : `Required in: ${missing.map(({title}) => title).join(', ')}`
 }
 
 export const maxLengthPerLanguage =
@@ -27,5 +23,5 @@ export const maxLengthPerLanguage =
 
     return tooLong.length === 0
       ? true
-      : `Max ${max} characters in: ${tooLong.map(({id}) => titleOf(id)).join(', ')}`
+      : `Max ${max} characters in: ${tooLong.map(({title}) => title).join(', ')}`
   }
