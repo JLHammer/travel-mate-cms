@@ -1,6 +1,8 @@
+// Fields shared by country, city and attraction
 import {defineField} from 'sanity'
 import {maxLengthPerLanguage, requireLanguages} from './languages'
 
+// Required in every language, since it's the title on cards and detail pages
 export const nameField = () =>
   defineField({
     name: 'name',
@@ -9,6 +11,7 @@ export const nameField = () =>
     validation: (rule) => rule.custom(requireLanguages),
   })
 
+// URL part (e.g. /countries/italy), made from the English name so it's the same in every language
 export const slugField = () =>
   defineField({
     name: 'slug',
@@ -18,6 +21,7 @@ export const slugField = () =>
     validation: (rule) => rule.required(),
   })
 
+// Optional one-liner on country cards
 export const taglineField = () =>
   defineField({
     name: 'tagline',
@@ -26,6 +30,7 @@ export const taglineField = () =>
     validation: (rule) => rule.custom(maxLengthPerLanguage(80)),
   })
 
+// Required in every language, since it's the main text on detail pages
 export const descriptionField = () =>
   defineField({
     name: 'description',
@@ -47,6 +52,7 @@ export const imageField = () =>
         title: 'Alternative text',
         type: 'string',
         description: 'Describes the image for screen readers',
+        // Only a warning, so missing alt text doesn't block publishing
         validation: (rule) => rule.required().warning(),
       }),
       defineField({
@@ -58,6 +64,7 @@ export const imageField = () =>
     ],
   })
 
+// Ticked items are shown in the featured sections on the front page
 export const featuredField = () =>
   defineField({
     name: 'featured',
@@ -66,6 +73,7 @@ export const featuredField = () =>
     initialValue: false,
   })
 
+// Latitude/longitude, shown on city and attraction detail pages
 export const locationField = () =>
   defineField({
     name: 'location',
@@ -78,5 +86,6 @@ export const websiteField = () =>
     name: 'website',
     title: 'Website',
     type: 'url',
+    // Only web links, so the frontend never renders e.g. a javascript: link
     validation: (rule) => rule.uri({scheme: ['http', 'https']}),
   })
