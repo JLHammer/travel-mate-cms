@@ -11,14 +11,12 @@ export const nameField = () =>
     validation: (rule) => rule.custom(requireLanguages),
   })
 
-// URL part (e.g. /countries/italy), made from the English name so it's the same in every language
+// URL part in every language, e.g. /lande/italien and /countries/italy
 export const slugField = () =>
   defineField({
     name: 'slug',
     title: 'Slug',
-    type: 'slug',
-    options: {source: 'name.en', maxLength: 96},
-    validation: (rule) => rule.required(),
+    type: 'localeSlug',
   })
 
 // Optional one-liner on country cards
@@ -50,10 +48,10 @@ export const imageField = () =>
       defineField({
         name: 'alt',
         title: 'Alternative text',
-        type: 'string',
-        description: 'Describes the image for screen readers',
+        type: 'localeString',
+        description: 'Describes the image for screen readers, in the language they read the page in',
         // Only a warning, so missing alt text doesn't block publishing
-        validation: (rule) => rule.required().warning(),
+        validation: (rule) => rule.custom(requireLanguages).warning(),
       }),
       defineField({
         name: 'credit',
