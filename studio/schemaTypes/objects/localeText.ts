@@ -1,6 +1,7 @@
 import {defineField, defineType} from 'sanity'
 import {LANGUAGES} from '../languages'
 
+// Like localeString, but a multi-line textarea for longer text
 export const localeText = defineType({
   name: 'localeText',
   title: 'Localized text',
