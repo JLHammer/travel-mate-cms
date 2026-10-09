@@ -11,7 +11,7 @@ export const nameField = () =>
     validation: (rule) => rule.custom(requireLanguages),
   })
 
-// URL part in every language, e.g. /da/lande/italien and /en/countries/italy
+// URL part in every language, e.g. /lande/italien and /countries/italy
 export const slugField = () =>
   defineField({
     name: 'slug',
