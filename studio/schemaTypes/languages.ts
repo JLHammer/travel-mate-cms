@@ -1,29 +1,68 @@
-import type {CustomValidator} from 'sanity'
+import type {CurrentUser, CustomValidator, SanityClient} from 'sanity'
 
-// Supported languages for localized fields
-export const LANGUAGES = [
-  {id: 'da', title: 'Dansk'},
-  {id: 'en', title: 'English'},
-  {id: 'es', title: 'Español'},
-]
+export const API_VERSION = '2025-02-19'
 
-// Shape of a localized field's value, e.g. {da: 'Italien', en: 'Italy', es: 'Italia'}
-type LocaleValue = Record<string, string | undefined> | undefined
+// A language from a locale document, e.g. {id: 'da', title: 'Dansk', enabled: true}
+export type Locale = {id: string; title: string; enabled: boolean}
 
-// Check that no language is empty or blank, and return a message with the missing ones if not
-export const requireLanguages: CustomValidator<LocaleValue> = (value) => {
-  const missing = LANGUAGES.filter(({id}) => !value?.[id]?.trim())
+// Shape of a localized field's value, e.g. [{_key: 'x1', language: 'da', value: 'Italien'}, …]
+type LocalizedValue = {_key: string; language?: string; value?: unknown}[] | undefined
 
-  return missing.length === 0 ? true : `Required in: ${missing.map(({title}) => title).join(', ')}`
+// Only published locales count, so a language being set up as a draft doesn't appear yet
+const LOCALES_QUERY = `*[_type == "locale" && defined(code)] | order(code asc) { "id": code, title, "enabled": enabled == true }`
+
+// Validation runs on every edit, so the locales are fetched at most every 30 seconds
+const CACHE_MS = 30_000
+let cache: {fetchedAt: number; locales: Promise<Locale[]>} | undefined
+
+// Every language, enabled or not, so editors can prepare a language before it's switched on
+export const fetchLocales = (client: SanityClient) => {
+  if (!cache || Date.now() - cache.fetchedAt > CACHE_MS) {
+    const locales = client
+      .withConfig({apiVersion: API_VERSION, perspective: 'published'})
+      .fetch<Locale[]>(LOCALES_QUERY)
+    cache = {fetchedAt: Date.now(), locales}
+  }
+  return cache.locales
 }
 
-// Check that no language is longer than max, and return a message with the too-long ones if not
+export const isAdministrator = (user: Omit<CurrentUser, 'role'> | null | undefined) =>
+  Boolean(user?.roles.some(({name}) => name === 'administrator'))
+
+// Lists in the Studio show each document's English name
+export const PREVIEW_LANGUAGE = 'en'
+
+// The value in one language, e.g. inLanguage(name, 'en') → 'Italy'. A slug's value is read from .current
+export const inLanguage = (value: unknown, language: string) => {
+  const item = (value as LocalizedValue)?.find((entry) => entry.language === language)
+  const text = item?.value as string | {current?: string} | undefined
+  return typeof text === 'string' ? text : text?.current
+}
+
+// Check that the enabled (or the not yet enabled) languages all have a value, and name the missing ones if not
+export const requireLanguages =
+  (which: 'enabled' | 'disabled' | 'all'): CustomValidator<LocalizedValue> =>
+  async (value, {getClient}) => {
+    const locales = await fetchLocales(getClient({apiVersion: API_VERSION}))
+    const missing = locales
+      .filter(({enabled}) => which === 'all' || enabled === (which === 'enabled'))
+      .filter(({id}) => !inLanguage(value, id)?.trim())
+
+    return missing.length === 0 ? true : `Missing in: ${missing.map(({title}) => title).join(', ')}`
+  }
+
+// Check that no language is longer than max, and mark the too-long ones if not
 export const maxLengthPerLanguage =
-  (max: number): CustomValidator<LocaleValue> =>
+  (max: number): CustomValidator<LocalizedValue> =>
   (value) => {
-    const tooLong = LANGUAGES.filter(({id}) => (value?.[id]?.length ?? 0) > max)
+    const tooLong = (value ?? []).filter(
+      (item) => typeof item.value === 'string' && item.value.length > max,
+    )
 
     return tooLong.length === 0
       ? true
-      : `Max ${max} characters in: ${tooLong.map(({title}) => title).join(', ')}`
+      : tooLong.map(({_key, language}) => ({
+          message: `Max ${max} characters (${language?.toUpperCase()})`,
+          path: [{_key}, 'value'],
+        }))
   }

@@ -1,7 +1,7 @@
 import {defineCliConfig} from 'sanity/cli'
 
 // The frontend lives in a sibling repo next to travel-mate-cms
-const FRONTEND = '../../travel-mate-frontend'
+export const FRONTEND = '../../travel-mate-frontend'
 
 export default defineCliConfig({
   api: {

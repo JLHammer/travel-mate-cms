@@ -1,14 +1,20 @@
 // Fields shared by country, city and attraction
-import {defineField} from 'sanity'
+import {defineField, type Rule} from 'sanity'
 import {maxLengthPerLanguage, requireLanguages} from './languages'
+
+// Missing translations block publishing in enabled languages, and only warn in languages still being prepared
+const requiredInEveryLanguage = (rule: Rule) => [
+  rule.custom(requireLanguages('enabled')),
+  rule.custom(requireLanguages('disabled')).warning(),
+]
 
 // Required in every language, since it's the title on cards and detail pages
 export const nameField = () =>
   defineField({
     name: 'name',
     title: 'Name',
-    type: 'localeString',
-    validation: (rule) => rule.custom(requireLanguages),
+    type: 'internationalizedArrayString',
+    validation: requiredInEveryLanguage,
   })
 
 // URL part in every language, e.g. /lande/italien and /countries/italy
@@ -16,7 +22,8 @@ export const slugField = () =>
   defineField({
     name: 'slug',
     title: 'Slug',
-    type: 'localeSlug',
+    type: 'internationalizedArraySlug',
+    validation: requiredInEveryLanguage,
   })
 
 // Optional one-liner on country cards
@@ -24,7 +31,7 @@ export const taglineField = () =>
   defineField({
     name: 'tagline',
     title: 'Tagline',
-    type: 'localeString',
+    type: 'internationalizedArrayString',
     validation: (rule) => rule.custom(maxLengthPerLanguage(80)),
   })
 
@@ -33,8 +40,8 @@ export const descriptionField = () =>
   defineField({
     name: 'description',
     title: 'Description',
-    type: 'localeText',
-    validation: (rule) => rule.custom(requireLanguages),
+    type: 'internationalizedArrayText',
+    validation: requiredInEveryLanguage,
   })
 
 export const imageField = () =>
@@ -48,10 +55,11 @@ export const imageField = () =>
       defineField({
         name: 'alt',
         title: 'Alternative text',
-        type: 'localeString',
-        description: 'Describes the image for screen readers, in the language they read the page in',
+        type: 'internationalizedArrayString',
+        description:
+          'Describes the image for screen readers, in the language they read the page in',
         // Only a warning, so missing alt text doesn't block publishing
-        validation: (rule) => rule.custom(requireLanguages).warning(),
+        validation: (rule) => rule.custom(requireLanguages('all')).warning(),
       }),
       defineField({
         name: 'credit',

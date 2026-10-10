@@ -9,6 +9,7 @@ import {
   taglineField,
   websiteField,
 } from './fields'
+import {inLanguage, PREVIEW_LANGUAGE} from './languages'
 
 export const attraction = defineType({
   name: 'attraction',
@@ -66,6 +67,11 @@ export const attraction = defineType({
   ],
 
   preview: {
-    select: {title: 'name.en', subtitle: 'city.name.en', media: 'image'},
+    select: {name: 'name', parent: 'city.name', media: 'image'},
+    prepare: ({name, parent, media}) => ({
+      title: inLanguage(name, PREVIEW_LANGUAGE),
+      subtitle: inLanguage(parent, PREVIEW_LANGUAGE),
+      media,
+    }),
   },
 })
