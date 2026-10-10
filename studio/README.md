@@ -88,13 +88,14 @@ Run it after changing a schema or a query, and after enabling or disabling a lan
 
 ## Migrations
 
-`migrations/` holds the script that moved existing content to the plugin's arrays:
+`migrations/` holds the scripts that changed existing content:
 
 | Migration | What it does |
 |---|---|
 | `localize-to-arrays` | Turns `name`, `tagline`, `description`, `slug` and `image.alt` from one object with a field per language (`name.da`, `name.en`, …) into an internationalized array with one item per language |
+| `fix-spelling` | Fixes the mistakes found in a spellcheck of all content, writes every apostrophe as a curly one (`’`), and remakes four English slugs that were kept from before the slugs were localized |
 
-It only touches fields that still have the old shape, so running it again changes nothing. A migration runs as a dry run unless `--no-dry-run` is passed:
+Each one only changes what still needs changing, so running it again changes nothing. A migration runs as a dry run unless `--no-dry-run` is passed:
 
 ```bash
 npx sanity migration run localize-to-arrays
