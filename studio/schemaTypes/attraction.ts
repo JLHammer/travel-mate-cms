@@ -42,6 +42,7 @@ export const attraction = defineType({
         layout: 'radio',
         direction: 'horizontal',
       },
+      validation: (rule) => rule.required(),
     }),
 
     taglineField(),
@@ -52,7 +53,11 @@ export const attraction = defineType({
       name: 'address',
       title: 'Address',
       type: 'string',
-      validation: (rule) => rule.required(),
+      // Parks and landmarks may have no street address, so a location is enough to find them
+      validation: (rule) =>
+        rule.custom((address, {document}) =>
+          address?.trim() || document?.location ? true : 'Add an address or a location',
+        ),
     }),
 
     locationField(),
