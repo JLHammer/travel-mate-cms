@@ -36,6 +36,6 @@ export const city = defineType({
   ],
 
   preview: {
-    select: {title: 'name.da', subtitle: 'country.name.da', media: 'image'},
+    select: {title: 'name.en', subtitle: 'country.name.en', media: 'image'},
   },
 })

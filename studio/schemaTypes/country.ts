@@ -35,6 +35,6 @@ export const country = defineType({
   ],
 
   preview: {
-    select: {title: 'name.da', subtitle: 'code', media: 'image'},
+    select: {title: 'name.en', subtitle: 'code', media: 'image'},
   },
 })

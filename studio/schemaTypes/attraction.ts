@@ -66,6 +66,6 @@ export const attraction = defineType({
   ],
 
   preview: {
-    select: {title: 'name.da', subtitle: 'city.name.da', media: 'image'},
+    select: {title: 'name.en', subtitle: 'city.name.en', media: 'image'},
   },
 })
