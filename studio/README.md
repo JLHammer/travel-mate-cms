@@ -1,6 +1,6 @@
 # TravelMate Studio
 
-The Sanity Studio for TravelMate. Editors write countries, cities and attractions here in Danish, English and Spanish, and the [TravelMate frontend](../../travel-mate-frontend) reads them with GROQ.
+The Sanity Studio for TravelMate. Editors write countries, cities, attractions and the site's own pages here in Danish, English and Spanish, and the [TravelMate frontend](../../travel-mate-frontend) reads them with GROQ.
 
 - Project: `cc196r01`
 - Dataset: `production`
@@ -18,6 +18,7 @@ The Studio opens at <http://localhost:3333>.
 |---|---|
 | `npm run dev` | Starts the Studio locally |
 | `npm run build` | Builds the Studio |
+| `npm run deploy` | Deploys the Studio to Sanity's hosting |
 | `npm run typegen` | Writes the query result types and the enabled languages to the frontend (see [Generated types](#generated-types)) |
 
 ## Content model
@@ -30,12 +31,29 @@ Country
 
 | Type | File | Fields |
 |---|---|---|
-| `country` | `schemaTypes/country.ts` | name, slug, code, tagline, description, image, featured |
-| `city` | `schemaTypes/city.ts` | name, slug, country, tagline, description, image, location, website, featured |
-| `attraction` | `schemaTypes/attraction.ts` | name, slug, city, category, tagline, description, image, address, location, website, featured |
+| `country` | `schemaTypes/country.ts` | name, slug, code, tagline, description, image |
+| `city` | `schemaTypes/city.ts` | name, slug, country, tagline, description, image, location, website |
+| `attraction` | `schemaTypes/attraction.ts` | name, slug, city, category, tagline, description, image, address, location, website |
 | `locale` | `schemaTypes/locale.ts` | title, code, enabled |
 
-Fields used by more than one type are defined once in `schemaTypes/fields.ts`. Ticking **Featured** shows the document on the frontend's home page.
+Fields used by more than one type are defined once in `schemaTypes/fields.ts`.
+
+### Pages and settings
+
+Everything on the website that isn't a country, city or attraction is a singleton: a document there's only one of. They're listed in `singletons.ts` and shown under the content types in the sidebar. Each one opens its document straight away, and it can't be created, duplicated, deleted or unpublished, so the website never loses a page.
+
+| Singleton | Type | File | What editors control |
+|---|---|---|---|
+| Home page | `homePage` | `schemaTypes/homePage.ts` | The hero (title, text, tagline, background image) and the three carousels: a heading and the countries, cities and attractions in it, dragged into order |
+| About page | `aboutPage` | `schemaTypes/aboutPage.ts` | Title, intro, two groups of cards (icon, title, text, link) and the closing text with a link |
+| Privacy policy | `legalPage` | `schemaTypes/legalPage.ts` | Title, intro, last updated date and the numbered sections |
+| Terms of use | `legalPage` | `schemaTypes/legalPage.ts` | Same fields as the privacy policy |
+| Navigation | `navigation` | `schemaTypes/navigation.ts` | The header and footer menus. Each link picks a page and can have its own label |
+| Site settings | `siteSettings` | `schemaTypes/siteSettings.ts` | The footer tagline and the social media links |
+
+Links to the website's own pages never use a typed URL. Editors pick a page from the list in `schemaTypes/sitePages.ts`, and the frontend builds the URL in the reader's language, so a link can't break when a slug changes. Body text on the about and legal pages is rich text (`schemaTypes/richText.ts`): paragraphs, bullet lists, bold, italics and links, and nothing that could break the design.
+
+All text in the singletons is translated the same way as the rest of the content, see [Languages](#languages).
 
 ## Languages
 
@@ -67,7 +85,7 @@ Lists in the Studio show each document's English name. The [frontend README](../
 ### Adding a language
 
 1. Create a `locale` document with the name and code, and leave **Enabled** off. Every translated field now has a button under it that adds an empty row for the new language.
-2. Translate the content. Warnings show every document that's still missing the language. When none are left, switch **Enabled** on.
+2. Translate the content, including the singletons under [Pages and settings](#pages-and-settings). Warnings show every document that's still missing the language. When none are left, switch **Enabled** on.
 3. A developer runs `npm run typegen`, which adds the language to the frontend, and translates the menus and buttons that TypeScript then flags there.
 
 ### Slugs
@@ -94,6 +112,7 @@ Run it after changing a schema or a query, and after enabling or disabling a lan
 |---|---|
 | `localize-to-arrays` | Turns `name`, `tagline`, `description`, `slug` and `image.alt` from one object with a field per language (`name.da`, `name.en`, …) into an internationalized array with one item per language |
 | `fix-spelling` | Fixes the mistakes found in a spellcheck of all content, writes every apostrophe as a curly one (`’`), and remakes four English slugs that were kept from before the slugs were localized |
+| `remove-featured` | Removes the old **Featured** checkbox from countries, cities and attractions, now that the home page carousels are picked by hand. Run it after `seed-home-page.ts`, which reads the ticked boxes |
 
 Each one only changes what still needs changing, so running it again changes nothing. A migration runs as a dry run unless `--no-dry-run` is passed:
 
@@ -104,8 +123,23 @@ npx sanity migration run localize-to-arrays --no-dry-run
 
 The earlier migrations, which made the slugs and the image alt text localized in the first place, are in the git history.
 
-`scripts/seed-locales.ts` created the `locale` documents for Danish, English and Spanish, and skips any that already exist:
+## Seed scripts
+
+`scripts/` holds the scripts that created the first version of a document. Each one only creates what doesn't exist yet, so running it again never overwrites what editors have changed. Add `-- --dry-run` to the navigation, pages and home page scripts to see what they would create without writing anything.
+
+| Script | What it creates |
+|---|---|
+| `seed-locales.ts` | The `locale` documents for Danish, English and Spanish |
+| `seed-navigation.ts` | The navigation, with the menus that used to be hardcoded in the frontend |
+| `seed-pages.ts` | The about page, the privacy policy and the terms of use, from `scripts/data/pages.json` |
+| `seed-home-page.ts` | The home page and the site settings, from `scripts/data/home.json`. The carousels get the places that had **Featured** ticked |
+
+Run them in this order, then the migration that removes the featured checkbox:
 
 ```bash
 npx sanity exec scripts/seed-locales.ts --with-user-token
+npx sanity exec scripts/seed-navigation.ts --with-user-token
+npx sanity exec scripts/seed-pages.ts --with-user-token
+npx sanity exec scripts/seed-home-page.ts --with-user-token
+npx sanity migration run remove-featured --no-dry-run
 ```
