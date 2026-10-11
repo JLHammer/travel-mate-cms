@@ -70,15 +70,6 @@ export const imageField = () =>
     ],
   })
 
-// Ticked items are shown in the featured sections on the front page
-export const featuredField = () =>
-  defineField({
-    name: 'featured',
-    title: 'Featured',
-    type: 'boolean',
-    initialValue: false,
-  })
-
 // Latitude/longitude, shown on city and attraction detail pages
 export const locationField = () =>
   defineField({

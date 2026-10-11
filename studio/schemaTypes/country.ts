@@ -1,12 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {
-  descriptionField,
-  featuredField,
-  imageField,
-  nameField,
-  slugField,
-  taglineField,
-} from './fields'
+import {descriptionField, imageField, nameField, slugField, taglineField} from './fields'
 import {inLanguage, PREVIEW_LANGUAGE} from './languages'
 
 export const country = defineType({
@@ -32,7 +25,6 @@ export const country = defineType({
     taglineField(),
     descriptionField(),
     imageField(),
-    featuredField(),
   ],
 
   preview: {

@@ -1,7 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {
   descriptionField,
-  featuredField,
   imageField,
   locationField,
   nameField,
@@ -63,7 +62,6 @@ export const attraction = defineType({
 
     locationField(),
     websiteField(),
-    featuredField(),
   ],
 
   preview: {

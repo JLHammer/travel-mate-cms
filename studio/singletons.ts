@@ -2,10 +2,12 @@
 // by its fixed ID, and they can't be created, duplicated or deleted.
 // The privacy policy and the terms share the legalPage type, but each has its own document
 export const SINGLETONS = [
+  {id: 'homePage', type: 'homePage', title: 'Home page'},
   {id: 'aboutPage', type: 'aboutPage', title: 'About page'},
   {id: 'privacyPage', type: 'legalPage', title: 'Privacy policy'},
   {id: 'termsPage', type: 'legalPage', title: 'Terms of use'},
   {id: 'navigation', type: 'navigation', title: 'Navigation'},
+  {id: 'siteSettings', type: 'siteSettings', title: 'Site settings'},
 ]
 
 export const SINGLETON_TYPES = [...new Set(SINGLETONS.map(({type}) => type))]
