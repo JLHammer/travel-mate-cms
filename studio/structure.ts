@@ -2,7 +2,7 @@ import type {StructureBuilder, StructureResolver} from 'sanity/structure'
 import {isAdministrator} from './schemaTypes/languages'
 import {SINGLETON_TYPES, SINGLETONS} from './singletons'
 
-// A singleton opens its one document straight away instead of a list
+// Singletons open their document right away instead of a list
 const singletonItem = (S: StructureBuilder, {id, type, title}: (typeof SINGLETONS)[number]) =>
   S.listItem()
     .id(id)

@@ -8,8 +8,8 @@ import {localizedSlug} from './schemaTypes/localizedSlug'
 import {SINGLETON_TYPES} from './singletons'
 import {structure} from './structure'
 
-// Deleting or unpublishing a language would orphan every translation stored under its code,
-// and a singleton like the navigation must always exist exactly once
+// Deleting or unpublishing a language would orphan every translation saved under its code
+// and singletons like the navigation should always exist exactly once
 const LOCKED_ACTIONS = ['delete', 'unpublish', 'duplicate']
 const LOCKED_TYPES = ['locale', ...SINGLETON_TYPES]
 
@@ -23,13 +23,13 @@ export default defineConfig({
   plugins: [
     structureTool({structure}),
     visionTool(),
-    // One array item per language, e.g. name: [{language: 'da', value: 'Italien'}, …].
-    // The languages come from the locale documents, so adding one needs no code
+    // One array item per language, like name: [{language: 'da', value: 'Italien'}, …]
+    // Languages come from the locale documents, so adding one needs no code
     internationalizedArray({
       languages: fetchLocales,
       fieldTypes: ['string', 'text', 'richText', localizedSlug],
-      // Only the buttons under each field. The bar at the top of a document is labelled
-      // "Add translation" but only adds empty rows, which reads as if it translates
+      // Only the buttons under each field. The bar at the top says "Add translation"
+      // but only adds empty rows, which looks like it translates
       buttonLocations: ['field'],
       languageDisplay: 'titleAndCode',
     }),
@@ -37,7 +37,7 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
-    // Singletons are opened from the sidebar, so they're left out of "Create new"
+    // Singletons open from the sidebar, so leave them out of "Create new"
     templates: (prev) => prev.filter(({schemaType}) => !SINGLETON_TYPES.includes(schemaType)),
   },
 

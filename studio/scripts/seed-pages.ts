@@ -3,8 +3,8 @@ import {getCliClient} from 'sanity/cli'
 import {API_VERSION} from '../schemaTypes/languages'
 import pages from './data/pages.json'
 
-// The texts as they were hardcoded in the frontend (src/i18n/legal.ts and the about texts in
-// translations.ts), copied into data/pages.json so the pages look the same after the switch
+// Texts as they were hardcoded in the frontend (src/i18n/legal.ts and the about texts in translations.ts)
+// copied into data/pages.json so the pages look the same after the switch
 
 type Language = keyof typeof pages.about
 type LegalSection = {title: string; paragraphs: string[]; list?: string[]}
@@ -13,7 +13,7 @@ const LANGUAGES = Object.keys(pages.about) as Language[]
 
 const key = () => randomUUID().replaceAll('-', '').slice(0, 12)
 
-// One item per language, in the shape the plugin stores, e.g. [{language: 'da', value: 'Om os'}, …]
+// One item per language in the shape the plugin saves, like [{language: 'da', value: 'Om os'}, …]
 const localized = <T>(itemType: string, pick: (language: Language) => T) =>
   LANGUAGES.map((language) => ({_key: key(), _type: itemType, language, value: pick(language)}))
 
@@ -39,7 +39,7 @@ const sectionBlocks = ({paragraphs, list = []}: LegalSection) => [
   ...list.map((item) => block(item, 'bullet')),
 ]
 
-// The sections line up across languages, so section number i is the same section in every language
+// Sections line up across languages, so section i is the same section in every language
 const legalPage = (id: string, content: typeof pages.privacy) => ({
   _id: id,
   _type: 'legalPage',
@@ -106,7 +106,7 @@ const aboutPage = {
   },
 }
 
-// Creates the pages that don't exist yet, so running it again never overwrites the editors' changes.
+// Creates the pages that don't exist yet, so running it again never overwrites the editors' changes
 // Run once with: npx sanity exec scripts/seed-pages.ts --with-user-token
 // Add "-- --dry-run" to only print the documents
 const seed = async () => {
@@ -122,7 +122,7 @@ const seed = async () => {
   }
 
   const client = getCliClient({apiVersion: API_VERSION})
-  // In one transaction, so the pages are either all created or none of them are
+  // One transaction, so either all pages are created or none of them
   const transaction = client.transaction()
   documents.forEach((doc) => transaction.createIfNotExists(doc))
   await transaction.commit()

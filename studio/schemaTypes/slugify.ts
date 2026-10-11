@@ -10,8 +10,8 @@ const TRANSLITERATIONS: Record<string, string> = {
   ł: 'l',
 }
 
-// Turns a name into an ASCII URL part, e.g. 'Akershus Fæstning' → 'akershus-faestning',
-// so URLs never need percent-encoding
+// Turns a name into an ASCII URL part so URLs never need percent-encoding
+// Like 'Akershus Fæstning' → 'akershus-faestning'
 export const slugify = (input: string) =>
   input
     .toLowerCase()

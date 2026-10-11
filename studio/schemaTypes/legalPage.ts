@@ -2,7 +2,7 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 import {requiredInEveryLanguage} from './fields'
 import {inLanguage, PREVIEW_LANGUAGE} from './languages'
 
-// One numbered section. The website lists the titles in the overview next to the text
+// One numbered section, the website lists the titles in the overview next to the text
 const legalSection = defineArrayMember({
   name: 'legalSection',
   title: 'Section',
@@ -27,7 +27,7 @@ const legalSection = defineArrayMember({
   },
 })
 
-// Used by both the privacy policy and the terms of use, which are the same kind of page
+// Used by both the privacy policy and the terms, they're the same kind of page
 export const legalPage = defineType({
   name: 'legalPage',
   title: 'Legal page',

@@ -6,8 +6,8 @@ import {FRONTEND} from '../sanity.cli'
 
 const OUTPUT = resolve(FRONTEND, 'src/i18n/languages.generated.ts')
 
-// Writes the enabled languages to the frontend as a typed list, so TypeScript flags every UI text,
-// legal text and URL section that's missing for a newly enabled language. Runs as part of npm run typegen
+// Writes the enabled languages to the frontend as a typed list, so TypeScript flags every UI text
+// and URL section that's missing for a new language. Runs as part of npm run typegen
 const generate = async () => {
   const locales = await getCliClient({apiVersion: API_VERSION})
     .withConfig({perspective: 'published'})
@@ -15,7 +15,7 @@ const generate = async () => {
       `*[_type == "locale" && enabled == true && defined(code)] | order(code asc) { "id": code, title }`,
     )
 
-  // An empty list would remove every language from the website, so keep the old file instead
+  // An empty list would remove every language from the website, so keep the old file
   if (locales.length === 0) throw new Error('No enabled languages found, so nothing was written')
 
   const entries = locales.map(

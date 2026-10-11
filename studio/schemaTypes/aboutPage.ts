@@ -3,7 +3,7 @@ import {requiredInEveryLanguage} from './fields'
 import {inLanguage, PREVIEW_LANGUAGE, requireLanguages} from './languages'
 import {SITE_PAGES} from './sitePages'
 
-// The icons the website has for the cards. Picked from a list so a card can't end up without one
+// Icons the website has for the cards, picked from a list so a card always has one
 const ICONS = [
   {title: 'Globe', value: 'globe'},
   {title: 'Building', value: 'building'},
@@ -15,7 +15,7 @@ const ICONS = [
   {title: 'Search', value: 'search'},
 ]
 
-// The link text is only needed once the card links somewhere
+// Link text is only needed if the card links somewhere
 const requiredWithLinkPage = (rule: Rule) =>
   rule.custom((value, context: ValidationContext) => {
     const parent = context.parent as {linkPage?: string} | undefined
@@ -119,7 +119,7 @@ export const aboutPage = defineType({
     cardSection('explore', 'Explore section'),
     cardSection('features', 'Features section'),
 
-    // The closing text, with a link at the end, e.g. to the contact page
+    // Closing text with a link at the end, like to the contact page
     defineField({
       name: 'outro',
       title: 'Closing section',

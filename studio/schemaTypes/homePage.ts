@@ -4,7 +4,7 @@ import {maxLengthPerLanguage} from './languages'
 
 type Reference = {_key: string; _ref?: string}
 
-// The same place twice in one carousel is almost always a mistake, so mark every copy after the first
+// The same place twice in a carousel is almost always a mistake, so mark every copy after the first
 const noDuplicates = (rule: ArrayRule<Reference[]>) =>
   rule.custom((items) => {
     const duplicates = (items ?? []).filter(
@@ -15,7 +15,7 @@ const noDuplicates = (rule: ArrayRule<Reference[]>) =>
       : duplicates.map(({_key}) => ({message: 'Already in this list', path: [{_key}]}))
   })
 
-// A carousel on the front page: a heading and the places in it, in the order they're shown
+// A carousel on the front page with a heading and the places in it, in the order they're shown
 const featuredSection = (name: string, title: string, type: string) =>
   defineField({
     name,
@@ -73,7 +73,7 @@ export const homePage = defineType({
           description: 'Optional. The tilted text on the image. Keep it to two short lines',
           validation: (rule) => rule.custom(maxLengthPerLanguage(40)),
         }),
-        // Only decoration behind the title, so unlike other images it has no alternative text
+        // Only decoration behind the title, so no alt text unlike the other images
         defineField({
           name: 'image',
           title: 'Image',

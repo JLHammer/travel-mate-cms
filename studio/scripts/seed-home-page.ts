@@ -4,8 +4,8 @@ import {getCliClient} from 'sanity/cli'
 import {API_VERSION} from '../schemaTypes/languages'
 import texts from './data/home.json'
 
-// The hero, carousel headings and footer tagline as they were hardcoded in the frontend,
-// copied into data/home.json. hero.webp is the image from the frontend's src/assets
+// Hero, carousel headings and footer tagline as they were hardcoded in the frontend, copied into data/home.json
+// hero.webp is the image from the frontend's src/assets
 
 type Language = keyof typeof texts
 
@@ -29,7 +29,7 @@ const text = (pick: (language: Language) => string) =>
 
 const client = getCliClient({apiVersion: API_VERSION})
 
-// The places that had the featured box ticked, in the same order the front page showed them
+// Places with the featured box ticked, in the same order as the front page showed them
 const featuredRefs = async (type: string) => {
   const ids = await client.fetch<string[]>(
     `*[_type == $type && featured == true && !(_id in path("drafts.**"))]
@@ -49,8 +49,8 @@ const uploadHero = async () => {
   return asset._id
 }
 
-// Creates the home page and the site settings if they don't exist yet, so running it again never
-// overwrites the editors' changes. Run once, before the remove-featured migration, with:
+// Creates the home page and site settings if they don't exist yet, so running it again never
+// overwrites the editors' changes. Run once before the remove-featured migration with:
 // npx sanity exec scripts/seed-home-page.ts --with-user-token
 // Add "-- --dry-run" to only print the documents
 const seed = async () => {

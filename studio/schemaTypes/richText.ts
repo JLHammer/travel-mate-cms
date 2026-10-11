@@ -1,8 +1,8 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {pageField} from './sitePages'
 
-// Text with paragraphs, bullet lists, bold, italics and links. Kept to what the pages can show,
-// so there are no headings or colours that would break the design.
+// Text with paragraphs, bullet lists, bold, italics and links
+// Only what the pages can show, so no headings or colours that would break the design
 // The plugin turns it into internationalizedArrayRichText, one text per language
 export const richText = defineType({
   name: 'richText',
@@ -35,7 +35,7 @@ export const richText = defineType({
                 name: 'href',
                 title: 'URL',
                 type: 'url',
-                // Same as websiteField, so the frontend never renders e.g. a javascript: link
+                // Same as websiteField, so the frontend never renders something like a javascript: link
                 validation: (rule) => rule.required().uri({scheme: ['http', 'https', 'mailto']}),
               }),
             ],

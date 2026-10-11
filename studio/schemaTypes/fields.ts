@@ -2,13 +2,13 @@
 import {defineField, type Rule} from 'sanity'
 import {maxLengthPerLanguage, requireLanguages} from './languages'
 
-// Missing translations block publishing in enabled languages, and only warn in languages still being prepared
+// Missing translations block publishing in enabled languages, and only warn in languages still in progress
 export const requiredInEveryLanguage = (rule: Rule) => [
   rule.custom(requireLanguages('enabled')),
   rule.custom(requireLanguages('disabled')).warning(),
 ]
 
-// Required in every language, since it's the title on cards and detail pages
+// Required in every language, it's the title on cards and detail pages
 export const nameField = () =>
   defineField({
     name: 'name',
@@ -17,7 +17,7 @@ export const nameField = () =>
     validation: requiredInEveryLanguage,
   })
 
-// URL part in every language, e.g. /lande/italien and /countries/italy
+// URL part in every language, like /lande/italien and /countries/italy
 export const slugField = () =>
   defineField({
     name: 'slug',
@@ -35,7 +35,7 @@ export const taglineField = () =>
     validation: (rule) => rule.custom(maxLengthPerLanguage(80)),
   })
 
-// Required in every language, since it's the main text on detail pages
+// Required in every language, it's the main text on detail pages
 export const descriptionField = () =>
   defineField({
     name: 'description',
@@ -83,6 +83,6 @@ export const websiteField = () =>
     name: 'website',
     title: 'Website',
     type: 'url',
-    // Only web links, so the frontend never renders e.g. a javascript: link
+    // Only web links, so the frontend never renders something like a javascript: link
     validation: (rule) => rule.uri({scheme: ['http', 'https']}),
   })

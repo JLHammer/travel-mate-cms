@@ -41,7 +41,7 @@ const noDuplicatePages = (rule: ArrayRule<NavLink[]>) =>
         }))
   })
 
-// The menus in the header and footer. Drag the links to change their order on the website
+// Menus in the header and footer, drag the links to change the order on the website
 export const navigation = defineType({
   name: 'navigation',
   title: 'Navigation',

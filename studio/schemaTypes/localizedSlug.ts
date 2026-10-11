@@ -2,8 +2,8 @@ import {defineField, type SlugIsUniqueValidator, type SlugSourceFn} from 'sanity
 import {API_VERSION, inLanguage} from './languages'
 import {slugify} from './slugify'
 
-// A slug must be unique across all languages within its type, so a URL always points to one document.
-// The same document may reuse a slug in several languages, e.g. 'atomium'
+// A slug must be unique across all languages in its type, so a URL always points to one document
+// The same document can use the same slug in several languages, like 'atomium'
 const isUniqueInAnyLanguage: SlugIsUniqueValidator = async (slug, {document, getClient}) => {
   if (!document) return true
 

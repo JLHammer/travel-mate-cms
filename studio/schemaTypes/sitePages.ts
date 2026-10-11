@@ -1,7 +1,7 @@
 import {defineField} from 'sanity'
 
-// The pages a menu item or a button can link to. Editors pick a page instead of typing a URL,
-// so a link can't break, and the frontend builds the URL in the reader's language, e.g. /lande or /countries
+// Pages a menu item or button can link to. Editors pick a page instead of typing a URL so links can't break
+// The frontend builds the URL in the reader's language, like /lande or /countries
 export const SITE_PAGES = [
   {title: 'Home', value: 'home'},
   {title: 'Countries', value: 'countries'},
@@ -14,7 +14,7 @@ export const SITE_PAGES = [
   {title: 'Favourites', value: 'favorites'},
 ]
 
-// e.g. pageTitle('privacy') → 'Privacy policy'
+// Like pageTitle('privacy') → 'Privacy policy'
 export const pageTitle = (page: string | undefined) =>
   SITE_PAGES.find(({value}) => value === page)?.title ?? 'No page chosen'
 

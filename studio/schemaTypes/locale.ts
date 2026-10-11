@@ -14,7 +14,7 @@ const isUniqueCode: CustomValidator<string | undefined> = async (code, {document
     : 'Another language already uses this code'
 }
 
-// Translations are stored under the code, so changing it later would orphan every one of them
+// Translations are saved under the code, so changing it later would orphan all of them
 const isUnchangedOnceSaved: CustomValidator<string | undefined> = async (
   code,
   {document, getClient},
@@ -32,7 +32,7 @@ const isUnchangedOnceSaved: CustomValidator<string | undefined> = async (
     : `Translations are stored under "${published}", so the code can't change once it's published`
 }
 
-// A language that content can be translated into. Only administrators can see and edit these
+// A language the content can be translated into, only administrators can see and edit these
 export const locale = defineType({
   name: 'locale',
   title: 'Language',

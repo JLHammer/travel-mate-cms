@@ -3,8 +3,8 @@ import {slugify} from '../../schemaTypes/slugify'
 
 type Item = {_key: string; language?: string; value?: unknown}
 
-// One correction in one language of one field. A text that no longer contains `from` is left alone,
-// so running the migration again changes nothing
+// One fix in one language of one field
+// Text that doesn't contain `from` anymore is skipped, so running it again changes nothing
 type Fix = {
   id: string
   field: 'name' | 'tagline' | 'description'
@@ -147,7 +147,7 @@ const FIXES: Fix[] = [
   },
 ]
 
-// English slugs kept from before the slugs were localized, which no longer match the English name
+// Old English slugs from before slugs were localized, they don't match the English name anymore
 const STALE_ENGLISH_SLUGS = [
   'attraction-fl-yen',
   'attraction-catedral-de-canarias',
@@ -155,14 +155,14 @@ const STALE_ENGLISH_SLUGS = [
   'city-luxembourg-city',
 ]
 
-// The text fields that get curly apostrophes, e.g. Italy's → Italy’s, like the rest of the content
+// Text fields that get curly apostrophes like the rest of the content (Italy's → Italy’s)
 const TEXT_FIELDS = ['name', 'tagline', 'description']
 
 const itemIn = (value: unknown, language: string) =>
   (value as Item[] | undefined)?.find((item) => item.language === language)
 
-// Fixes the spelling mistakes found in a spellcheck of all content, writes every apostrophe
-// as a curly one and remakes the stale English slugs from the English name
+// Fixes the spelling mistakes from a spellcheck of all content, makes every apostrophe curly
+// and remakes the old English slugs from the English name
 export default defineMigration({
   title: 'Fix spelling, apostrophes and stale English slugs',
   documentTypes: ['country', 'city', 'attraction'],
@@ -171,7 +171,7 @@ export default defineMigration({
     document(doc) {
       const patches: NodePatch[] = []
 
-      // Collect each field's new text first, so several fixes to the same text become one patch
+      // Collect the new text for each field first, so several fixes to one text become one patch
       const texts = new Map<string, {field: string; item: Item; text: string}>()
       const textOf = (field: string, item: Item) => {
         const id = `${field}.${item._key}`
