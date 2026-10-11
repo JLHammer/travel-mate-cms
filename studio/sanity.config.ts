@@ -5,10 +5,13 @@ import {internationalizedArray} from 'sanity-plugin-internationalized-array'
 import {schemaTypes} from './schemaTypes'
 import {fetchLocales, isAdministrator} from './schemaTypes/languages'
 import {localizedSlug} from './schemaTypes/localizedSlug'
+import {SINGLETON_TYPES} from './singletons'
 import {structure} from './structure'
 
-// Deleting or unpublishing a language would orphan every translation stored under its code
-const LOCKED_LOCALE_ACTIONS = ['delete', 'unpublish', 'duplicate']
+// Deleting or unpublishing a language would orphan every translation stored under its code,
+// and a singleton like the navigation must always exist exactly once
+const LOCKED_ACTIONS = ['delete', 'unpublish', 'duplicate']
+const LOCKED_TYPES = ['locale', ...SINGLETON_TYPES]
 
 export default defineConfig({
   name: 'default',
@@ -34,12 +37,14 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+    // Singletons are opened from the sidebar, so they're left out of "Create new"
+    templates: (prev) => prev.filter(({schemaType}) => !SINGLETON_TYPES.includes(schemaType)),
   },
 
   document: {
     actions: (prev, {schemaType}) =>
-      schemaType === 'locale'
-        ? prev.filter(({action}) => !action || !LOCKED_LOCALE_ACTIONS.includes(action))
+      LOCKED_TYPES.includes(schemaType)
+        ? prev.filter(({action}) => !action || !LOCKED_ACTIONS.includes(action))
         : prev,
     newDocumentOptions: (prev, {currentUser}) =>
       isAdministrator(currentUser) ? prev : prev.filter(({templateId}) => templateId !== 'locale'),
