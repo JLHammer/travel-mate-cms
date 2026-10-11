@@ -18,7 +18,6 @@ The Studio opens at <http://localhost:3333>.
 |---|---|
 | `npm run dev` | Starts the Studio locally |
 | `npm run build` | Builds the Studio |
-| `npm run deploy` | Deploys the Studio to Sanity's hosting |
 | `npm run typegen` | Writes the query result types and the enabled languages to the frontend (see [Generated types](#generated-types)) |
 
 ## Content model
