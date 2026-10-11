@@ -39,6 +39,18 @@ export const inLanguage = (value: unknown, language: string) => {
   return typeof text === 'string' ? text : text?.current
 }
 
+type Block = {children?: {text?: string}[]}
+
+// Rich text is a list of blocks, so it only counts as written if a block has some actual text.
+// An empty editor still leaves one empty paragraph behind
+const isFilledIn = (value: unknown, language: string) => {
+  const text = (value as LocalizedValue)?.find((entry) => entry.language === language)?.value
+  if (Array.isArray(text)) {
+    return (text as Block[]).some((block) => block.children?.some((child) => child.text?.trim()))
+  }
+  return Boolean(inLanguage(value, language)?.trim())
+}
+
 // Check that the enabled (or the not yet enabled) languages all have a value, and name the missing ones if not
 export const requireLanguages =
   (which: 'enabled' | 'disabled' | 'all'): CustomValidator<LocalizedValue> =>
@@ -46,7 +58,7 @@ export const requireLanguages =
     const locales = await fetchLocales(getClient({apiVersion: API_VERSION}))
     const missing = locales
       .filter(({enabled}) => which === 'all' || enabled === (which === 'enabled'))
-      .filter(({id}) => !inLanguage(value, id)?.trim())
+      .filter(({id}) => !isFilledIn(value, id))
 
     return missing.length === 0 ? true : `Missing in: ${missing.map(({title}) => title).join(', ')}`
   }

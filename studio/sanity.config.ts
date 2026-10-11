@@ -27,7 +27,7 @@ export default defineConfig({
     // The languages come from the locale documents, so adding one needs no code
     internationalizedArray({
       languages: fetchLocales,
-      fieldTypes: ['string', 'text', localizedSlug],
+      fieldTypes: ['string', 'text', 'richText', localizedSlug],
       // Only the buttons under each field. The bar at the top of a document is labelled
       // "Add translation" but only adds empty rows, which reads as if it translates
       buttonLocations: ['field'],

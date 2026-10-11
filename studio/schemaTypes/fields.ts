@@ -3,7 +3,7 @@ import {defineField, type Rule} from 'sanity'
 import {maxLengthPerLanguage, requireLanguages} from './languages'
 
 // Missing translations block publishing in enabled languages, and only warn in languages still being prepared
-const requiredInEveryLanguage = (rule: Rule) => [
+export const requiredInEveryLanguage = (rule: Rule) => [
   rule.custom(requireLanguages('enabled')),
   rule.custom(requireLanguages('disabled')).warning(),
 ]
